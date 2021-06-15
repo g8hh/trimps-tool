@@ -1,0 +1,94 @@
+extends index.pug
+
+block meta
+  - title = 'zFarm'
+  script(src='zfarm.js')
+
+block content
+  form.flexbox(action='javascript:main()')
+    fieldset.box(style='flex: 0 0 36em')
+      legend Inputs
+      label(title='Export your Trimps save and paste it here')
+        textarea#save(onfocus='this.value = ""' onpaste='handle_paste(event, read_save, main)')
+        | Import save (<a onclick='get_paste_back()'>get it back</a>)
+      label(title='Biome of the maps you create')
+        select#biome(data-saved='')
+          option(value='gardens') Garden
+          option(value='mountain') Mountain
+          option(value='depths') Depths
+          option(value='forest') Forest
+          option(value='sea') Sea
+        | Biome
+      label(title='Your minimum attack, in X, without the Titimp buff')
+        input#attack(type='text' oninput='check_input(this)' required)
+        | Min ATK
+      label(title='Your current world zone')
+        input#zone(type='text' required pattern='\\d+')
+        | World zone
+      .tabs
+        label(for='advanced') Toggle manual input
+        input#advanced(type='checkbox' data-saved='')
+        label(title='Number of fragments you can spend on a map')
+          input#fragments(type='text' oninput='check_input(this)')
+          | Fragments
+        label(title='Your Highest Zone Ever')
+          input#hze(type='text' value='42' pattern='[0-9]+' onchange='set_hze(this.value)')
+          | HZE
+        label(title='Total number of map imp-orts you have unlocked')
+          input#imports(type='text' value='5' pattern='[0-5]')
+          | Map imp-orts
+        label(title='Check if you have unlocked the Titimp imp-ort')
+          input#titimp(type='checkbox' checked='')
+          | Unlocked titimp?
+        label(title='Enemy health multiplier in maps')
+          input#challenge(type='text' oninput='check_input(this)' value='1' pattern='(?!0$)[0-9.]+')
+          | Challenge health
+        label(title='Check if you’re running Coordinate or Coordinate²')
+          input#coordinate(type='checkbox')
+          | Coordinate
+        label(title='Attack speed, in ticks per attack')
+          input#speed(type='text' value='3.585' pattern='(?!0$)[0-9.]+')
+          | Attack speed
+        label(title='Your max attack, divided by your min attack (usually 1.2, but can vary due to challenges)')
+          input#range(type='text' value='1.2' pattern='[1-9][0-9.]*')
+          | Attack range (max/min)
+        label(title='Critical hit chance, as displayed in the damage breakdown')
+          input#cc(type='text' value='50' pattern='[-0-9.]+')
+          | Crit chance
+        label(title='Bonus critical damage, as displayed in the damage breakdown')
+          input#cd(type='text' value='400' pattern='\\d{3,}')
+          | Crit damage%
+        label(title='Average size of the maps you create')
+          input#size(type='text' value='27' pattern='\\d\\d')
+          | Map size
+        label(title='Average difficulty of the maps you create')
+          input#difficulty(type='text' value='80' pattern='[1-9][0-9]*')
+          | Map difficulty%
+        label(title='Level of your Overkill perk (max 30)' data-hide=170)
+          input#overkill(type='text' value='0' pattern='[12]?\\d|30')
+          | Overkill
+        label(title='Maximum number of cells you can overkill' data-hide=301)
+          input#ok_spread(type='text' value='1' pattern='[123]')
+          | Overkill spread
+        label(title='The plaguebringer mod on your shield' data-hide=500)
+          input#plaguebringer(type='text' value='0' pattern='[0-9.]+')
+          | Plaguebringer
+        label(title='Empowerment level of the currently active nature' data-hide=236)
+          input#nature(type='text' value='0' pattern='\\d+')
+          | Nature
+        label(title='Stack transfer level of the currently active nature' data-hide=236)
+          input#transfer(type='text' value='0' pattern='\\d+')
+          | Transfer
+        label(title='Check if you have unlocked the Map Reducer mastery' data-hide=181)
+          input#reducer(type='checkbox')
+          | Map Reducer?
+      button.centered Recalculate
+
+    fieldset#results.box(style='opacity: 0; flex: 0 0 36em')
+      legend Results
+      p(style='font-size: 1.1em') #[b#result]. #[span#comment]
+      table#details
+      p
+        | Note: the displayed loot values don’t account for special imps, looting perks and staffs.
+        | As such, your actual loot will be much higher. However, these factors affect all maps in the
+        | same way, and don’t affect the choice of map.
